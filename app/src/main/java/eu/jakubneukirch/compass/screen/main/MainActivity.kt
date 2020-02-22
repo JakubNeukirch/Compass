@@ -13,6 +13,10 @@ class MainActivity : BaseActivity<MainViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        compassArrow.rotation = 100f
+        setRotation(100f)
+    }
+
+    private fun setRotation(rotation: Float) {
+        compassArrow.rotation = rotation
     }
 }
