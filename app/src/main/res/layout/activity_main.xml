@@ -6,13 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".screen.main.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+    <ImageView
+        android:id="@+id/compassBackground"
+        android:src="@drawable/compass"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="1"
+        android:layout_margin="@dimen/compass_margin"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/compass_background_description" />
+    <ImageView
+        android:id="@+id/compassArrow"
+        android:src="@drawable/arrow"
+        android:layout_margin="@dimen/compass_arrow_margin"
+        android:contentDescription="@string/compass_arrow_description"
+        app:layout_constraintTop_toTopOf="@id/compassBackground"
+        app:layout_constraintEnd_toEndOf="@id/compassBackground"
+        app:layout_constraintStart_toStartOf="@id/compassBackground"
+        app:layout_constraintBottom_toBottomOf="@id/compassBackground"
+        android:adjustViewBounds="true"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
