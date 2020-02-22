@@ -10,7 +10,6 @@
         android:id="@+id/compassBackground"
         android:src="@drawable/compass"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="1"
@@ -47,8 +46,7 @@
         android:layout_margin="@dimen/cords_input_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/latitudeEditText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/compassBackground" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -66,18 +64,17 @@
         android:layout_margin="@dimen/cords_input_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cordsSwitch"
-        app:layout_constraintStart_toEndOf="@id/longitudeEditText"
-        app:layout_constraintTop_toBottomOf="@id/compassBackground" />
+        app:layout_constraintStart_toEndOf="@id/longitudeEditText" />
 
     <Switch
         android:id="@+id/cordsSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:enabled="false"
         android:layout_margin="@dimen/cords_input_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/latitudeEditText"
-        app:layout_constraintTop_toBottomOf="@id/compassBackground" />
+        app:layout_constraintStart_toEndOf="@id/latitudeEditText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

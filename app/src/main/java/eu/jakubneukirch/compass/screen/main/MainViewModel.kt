@@ -1,7 +1,5 @@
 package eu.jakubneukirch.compass.screen.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import eu.jakubneukirch.compass.base.BaseViewModel
 import eu.jakubneukirch.compass.screen.main.usecase.IGetNorthDirectionUpdates
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -10,10 +8,7 @@ import timber.log.Timber
 
 class MainViewModel(
     private val _getNorthDirectionUpdates: IGetNorthDirectionUpdates
-) : BaseViewModel() {
-
-    private val _direction = MutableLiveData<Float>()
-    val direction: LiveData<Float> get() = _direction
+) : BaseViewModel<MainState>() {
 
     fun listenDirectionChanges() {
         disposables.add(
@@ -21,12 +16,16 @@ class MainViewModel(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext { degrees ->
-                    _direction.value = degrees
+                    mutableState.value = MainState.NorthDirectionState(degrees)
                 }
                 .doOnError {
                     Timber.e(it)
                 }
                 .subscribe()
         )
+    }
+
+    fun setCords(longitude: Double?, latitude: Double?) {
+
     }
 }
