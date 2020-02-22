@@ -2,4 +2,6 @@
 <resources>
     <dimen name="compass_margin">32dp</dimen>
     <dimen name="compass_arrow_margin">32dp</dimen>
+    <dimen name="cords_input_margin">16dp</dimen>
+    <dimen name="label_margin">4dp</dimen>
 </resources>

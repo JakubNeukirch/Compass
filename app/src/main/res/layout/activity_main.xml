@@ -31,4 +31,53 @@
         android:layout_width="0dp"
         android:layout_height="0dp"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/label_margin"
+        android:labelFor="@id/longitudeEditText"
+        android:text="@string/longitude_label"
+        app:layout_constraintBottom_toTopOf="@id/longitudeEditText"
+        app:layout_constraintStart_toStartOf="@id/longitudeEditText" />
+
+    <EditText
+        android:id="@+id/longitudeEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/cords_input_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/latitudeEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/compassBackground" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/label_margin"
+        android:labelFor="@id/latitudeEditText"
+        android:text="@string/latitude_label"
+        app:layout_constraintBottom_toTopOf="@id/latitudeEditText"
+        app:layout_constraintStart_toStartOf="@id/latitudeEditText" />
+
+    <EditText
+        android:id="@+id/latitudeEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/cords_input_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cordsSwitch"
+        app:layout_constraintStart_toEndOf="@id/longitudeEditText"
+        app:layout_constraintTop_toBottomOf="@id/compassBackground" />
+
+    <Switch
+        android:id="@+id/cordsSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/cords_input_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/latitudeEditText"
+        app:layout_constraintTop_toBottomOf="@id/compassBackground" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

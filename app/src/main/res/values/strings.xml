@@ -2,4 +2,6 @@
     <string name="app_name">Compass</string>
     <string name="compass_background_description">Round compass background</string>
     <string name="compass_arrow_description">Compass arrow</string>
+    <string name="longitude_label">Longitude:</string>
+    <string name="latitude_label">Latitude:</string>
 </resources>
