@@ -20,7 +20,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
 
     private fun observeDirection() {
         viewModel.direction.observe(this, Observer { degrees ->
-            setRotation(-degrees)
+            setRotation(degrees)
         })
     }
 
