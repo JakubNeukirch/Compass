@@ -1,18 +1,24 @@
 package eu.jakubneukirch.compass.app
 
 import android.app.Application
-import eu.jakubneukirch.compass.screen.main.MainViewModel
-import org.koin.android.viewmodel.dsl.viewModel
+import eu.jakubneukirch.compass.BuildConfig
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
+import timber.log.Timber
 
-class App: Application() {
+class App : Application() {
     override fun onCreate() {
         super.onCreate()
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+        initKoin()
+    }
+
+    private fun initKoin() {
         startKoin {
-            module {
-                viewModel { MainViewModel() }
-            }
+            androidContext(this@App)
+            modules(listOf(viewModelsModule, useCasesModule, servicesModule))
         }
     }
 }
