@@ -8,12 +8,16 @@ import android.hardware.SensorManager
 import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
 
-class DirectionService(context: Context) {
+interface NorthDirectionService {
+    fun listenNorthDirection(): Observable<Float>
+}
+
+class SensorNorthDirectionService(context: Context): NorthDirectionService {
     private val _sensorManager: SensorManager by lazy {
         context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
-    fun listenNorthDirection(): Observable<Float> {
+    override fun listenNorthDirection(): Observable<Float> {
         var listener: SensorEventListener? = null
         val observable = Observable.create<Float> { emitter ->
             listener = object : SensorEventListener {
@@ -21,8 +25,8 @@ class DirectionService(context: Context) {
 
                 override fun onSensorChanged(event: SensorEvent?) {
                     event?.let {
-                        Timber.i("event value: ${it.values[0]}, ${it.values[1]}, ${it.values[2]}")
-                        emitter.onNext(it.values[0])
+                        //Timber.i("event value: ${it.values[0]}, ${it.values[1]}, ${it.values[2]}")
+                        emitter.onNext(-it.values[0])
                     }
                 }
             }
