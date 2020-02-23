@@ -100,7 +100,7 @@
         android:elevation="@dimen/switch_elevation"
         app:layout_constraintEnd_toStartOf="@id/cordsLabel"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@id/compassBackground"
+        app:layout_constraintStart_toStartOf="@id/longitudeEditText"
         app:layout_constraintTop_toBottomOf="@id/longitudeEditText" />
 
 
