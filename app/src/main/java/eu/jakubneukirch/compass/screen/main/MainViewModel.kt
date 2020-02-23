@@ -23,6 +23,7 @@ class MainViewModel(
 
     companion object {
         private const val INPUT_DEBOUNCE_DELAY_MILLIS = 150L
+        const val VALUE_REFRESH_TIME_MILLIS = 100L
     }
 
     private val _error = MutableLiveData<Event<MainError>>()
@@ -37,9 +38,11 @@ class MainViewModel(
             _getNorthDirectionUpdates(Unit)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .sample(VALUE_REFRESH_TIME_MILLIS, TimeUnit.MILLISECONDS)
                 .subscribeBy(
                     onNext = { degrees ->
-                        mutableState.value = MainState.NorthDirectionState(degrees)
+                        Timber.i("Degrees")
+                        mutableState.postValue(MainState.NorthDirectionState(degrees))
                     },
                     onError = Timber::e
                 )
@@ -64,6 +67,8 @@ class MainViewModel(
                 IGetCoordinatesDirectionUpdates.Params(longitude, latitude)
             )
                 .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .sample(VALUE_REFRESH_TIME_MILLIS, TimeUnit.MILLISECONDS)
                 .subscribeBy(
                     onNext = { degrees ->
                         stopListeningNorthDirectionChanges()

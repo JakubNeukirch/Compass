@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Surface
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
 import androidx.lifecycle.Observer
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -21,6 +23,7 @@ import eu.jakubneukirch.compass.base.BaseActivity
 import eu.jakubneukirch.compass.utils.OnTextChangedListener
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
+import kotlin.math.roundToInt
 
 
 class MainActivity : BaseActivity<MainViewModel, MainState>() {
@@ -37,6 +40,9 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
         createLocationExplanationDialog()
     }
     private var _isLocationExplanationCanceled: Boolean = false
+
+    private var _arrowAnimation: Animation? = null
+    private var _lastAngle: Float = 0f
 
     private val _onCoordinationTextChangedListener = OnTextChangedListener {
         updateCoordinatesData()
@@ -133,8 +139,21 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
     }
 
     private fun setRotation(rotation: Float) {
-        val angle = getOrientationAngle()
-        compassArrow.rotation = rotation - angle
+        val angle = (rotation - getOrientationAngle()).roundToInt()
+        _arrowAnimation?.cancel()
+        _arrowAnimation = RotateAnimation(
+            _lastAngle,
+            angle.toFloat(),
+            Animation.RELATIVE_TO_SELF,
+            0.5f,
+            Animation.RELATIVE_TO_SELF,
+            0.5f
+        ).apply {
+            duration = MainViewModel.VALUE_REFRESH_TIME_MILLIS
+            this.fillAfter = true
+        }
+        compassArrow.startAnimation(_arrowAnimation)
+        _lastAngle = angle.toFloat()
     }
 
     private fun getOrientationAngle(): Int {
