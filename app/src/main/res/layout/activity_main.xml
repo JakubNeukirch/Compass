@@ -50,8 +50,8 @@
         android:layout_margin="@dimen/cords_input_margin"
         style="@style/AppTheme.EditTextCoordinate"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/latitudeEditText"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/latitudeEditText" />
 
     <TextView
         android:id="@+id/latitudeLabel"
@@ -69,10 +69,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/cords_input_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
         style="@style/AppTheme.EditTextCoordinate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/longitudeEditText" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/longitudeEditText"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/cordsLabel"
