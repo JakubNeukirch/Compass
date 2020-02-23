@@ -6,8 +6,10 @@
     <string name="latitude_label">Latitude:</string>
     <string name="providers_error">Location providers unavailable</string>
     <string name="unknown_error">Oops! Something wrong happened</string>
-    <string name="permission_explanation_open">Open</string>
-    <string name="permission_explanation_cancel">Cancel</string>
+    <string name="open">Open</string>
+    <string name="cancel">Cancel</string>
     <string name="permission_explanation_title">Location permission needed</string>
     <string name="permission_explanation_description">To provide you with all the features of the app it is needed to have location permission granted. To do that You can open app Settings and accept Location permission</string>
+    <string name="location_explanation_title">Location needed</string>
+    <string name="location_explanation_description">To provide you with all the features of the app it is needed to have location services enabled. To do that You can open Settings and enable Location services.</string>
 </resources>

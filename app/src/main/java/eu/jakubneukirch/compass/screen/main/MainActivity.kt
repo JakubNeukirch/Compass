@@ -25,9 +25,14 @@ import org.koin.android.viewmodel.ext.android.viewModel
 class MainActivity : BaseActivity<MainViewModel, MainState>() {
 
     override val viewModel: MainViewModel by viewModel()
-    private val _explanationDialog: AlertDialog by lazy {
-        createExplanationDialog()
+    private val _permissionExplanationDialog: AlertDialog by lazy {
+        createPermissionExplanationDialog()
     }
+    private val _locationExplanationDialog: AlertDialog by lazy {
+        createLocationExplanationDialog()
+    }
+    private var _isLocationExplanationCanceled: Boolean = false
+
     private val _onCoordinationTextChangedListener = OnTextChangedListener {
         updateCoordinatesData()
     }
@@ -46,14 +51,13 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
             Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                     || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         )
-
     }
 
     private fun observeErrors() {
         viewModel.error.observe(this, Observer { event ->
             event?.pendingContent?.let { error ->
                 when (error) {
-                    MainViewModel.MainError.PROVIDERS_UNAVAILABLE -> showMessage(getString(R.string.providers_error))
+                    MainViewModel.MainError.PROVIDERS_UNAVAILABLE -> showLocationExplanationDialog()
                     MainViewModel.MainError.LOCATION_PERMISSION_NOT_GRANTED -> requestLocationPermission()
                     MainViewModel.MainError.UNKNOWN -> showMessage(getString(R.string.unknown_error))
                 }
@@ -78,7 +82,7 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
 
                 override fun onPermissionDenied(response: PermissionDeniedResponse?) {
                     if (response?.isPermanentlyDenied == true) {
-                        showExplanationDialog()
+                        showPermissionExplanationDialog()
                     } else {
                         requestLocationPermission()
                     }
@@ -87,21 +91,21 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
             .check()
     }
 
-    private fun showExplanationDialog() {
-        if (!_explanationDialog.isShowing) {
-            _explanationDialog.show()
+    private fun showPermissionExplanationDialog() {
+        if (!_permissionExplanationDialog.isShowing) {
+            _permissionExplanationDialog.show()
         }
     }
 
-    private fun createExplanationDialog(): AlertDialog {
+    private fun createPermissionExplanationDialog(): AlertDialog {
         return AlertDialog.Builder(this)
             .setTitle(R.string.permission_explanation_title)
             .setMessage(R.string.permission_explanation_description)
-            .setPositiveButton(R.string.permission_explanation_open) { dialog, _ ->
+            .setPositiveButton(R.string.open) { dialog, _ ->
                 dialog?.dismiss()
                 openAppSettings()
             }
-            .setNegativeButton(R.string.permission_explanation_cancel) { dialog, _ ->
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
                 dialog?.dismiss()
             }
             .create()
@@ -114,12 +118,38 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
         startActivity(intent)
     }
 
+    private fun showLocationExplanationDialog() {
+        if (!_isLocationExplanationCanceled && !_locationExplanationDialog.isShowing) {
+            _locationExplanationDialog.show()
+        }
+    }
+
+    private fun createLocationExplanationDialog(): AlertDialog {
+        return AlertDialog.Builder(this)
+            .setTitle(R.string.location_explanation_title)
+            .setMessage(R.string.location_explanation_description)
+            .setPositiveButton(R.string.open) { dialog, _ ->
+                dialog?.dismiss()
+                openLocationSettings()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog?.dismiss()
+                _isLocationExplanationCanceled = true
+            }
+            .create()
+    }
+
+    private fun openLocationSettings() {
+        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+    }
+
     private fun enableLocationFeatures(isEnabled: Boolean) {
         latitudeEditText.isEnabled = isEnabled
         longitudeEditText.isEnabled = isEnabled
         if (isEnabled) {
             latitudeEditText.addTextChangedListener(_onCoordinationTextChangedListener)
             longitudeEditText.addTextChangedListener(_onCoordinationTextChangedListener)
+            updateCoordinatesData()
         } else {
             latitudeEditText.removeTextChangedListener(_onCoordinationTextChangedListener)
             longitudeEditText.removeTextChangedListener(_onCoordinationTextChangedListener)
