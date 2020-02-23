@@ -24,6 +24,10 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : BaseActivity<MainViewModel, MainState>() {
 
+    companion object {
+        private const val NEEDED_PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION
+    }
+
     override val viewModel: MainViewModel by viewModel()
     private val _permissionExplanationDialog: AlertDialog by lazy {
         createPermissionExplanationDialog()
@@ -49,7 +53,7 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
         super.onResume()
         enableLocationFeatures(
             Build.VERSION.SDK_INT < Build.VERSION_CODES.M
-                    || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    || checkSelfPermission(NEEDED_PERMISSION) == PackageManager.PERMISSION_GRANTED
         )
     }
 
@@ -67,7 +71,7 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
 
     private fun requestLocationPermission() {
         Dexter.withActivity(this)
-            .withPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+            .withPermission(NEEDED_PERMISSION)
             .withListener(object : PermissionListener {
                 override fun onPermissionGranted(response: PermissionGrantedResponse?) {
                     enableLocationFeatures(true)
