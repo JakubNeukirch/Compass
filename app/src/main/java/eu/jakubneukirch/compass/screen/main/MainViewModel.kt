@@ -67,11 +67,9 @@ class MainViewModel(
                 .subscribeBy(
                     onNext = { degrees ->
                         stopListeningNorthDirectionChanges()
-                        Timber.i("direction degrees $degrees")
                         mutableState.value = MainState.CordsDirectionState(degrees)
                     },
                     onError = {
-                        Timber.e(it)
                         listenNorthDirectionChanges()
                         if (it is ProvidersUnavailableException) {
                             _error.value = MainError.PROVIDERS_UNAVAILABLE.toEvent()

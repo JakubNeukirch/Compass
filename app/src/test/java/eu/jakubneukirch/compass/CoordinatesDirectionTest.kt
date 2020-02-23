@@ -5,6 +5,7 @@ import eu.jakubneukirch.compass.screen.main.usecase.GetCoordinatesDirectionUpdat
 import eu.jakubneukirch.compass.screen.main.usecase.IGetCoordinatesDirectionUpdates
 import eu.jakubneukirch.compass.screen.main.usecase.NoSufficientDataException
 import eu.jakubneukirch.compass.service.LocationService
+import eu.jakubneukirch.compass.service.NorthDirectionService
 import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.rxjava3.core.Observable
@@ -16,6 +17,7 @@ class CoordinatesDirectionTest {
 
     private lateinit var _coordinatesDirectionUpdates: IGetCoordinatesDirectionUpdates
     private lateinit var _locationService: LocationService
+    private lateinit var _northDirectionService: NorthDirectionService
 
     @Test
     fun `should throw NoSufficientDataException on longitude null`() {
@@ -67,12 +69,25 @@ class CoordinatesDirectionTest {
             }
     }
 
+    @Test
+    fun `should add coordinates result to north angles`() {
+        _coordinatesDirectionUpdates(IGetCoordinatesDirectionUpdates.Params(-10.0, 0.0))
+            .test()
+            .assertValueAt(1) {
+                println(it)
+                it == 210.0f
+            }
+    }
+
     @Before
     fun setup() {
         _locationService = mockk {
             every { listenToLocation() } returns Observable.just(Coordinates(0.0, 0.0))
         }
-        _coordinatesDirectionUpdates = GetCoordinatesDirectionUpdates(_locationService)
+        _northDirectionService = mockk {
+            every { listenNorthDirection() } returns Observable.just(0f, 30f)
+        }
+        _coordinatesDirectionUpdates = GetCoordinatesDirectionUpdates(_locationService, _northDirectionService)
     }
 
     @After
