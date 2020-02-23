@@ -76,10 +76,11 @@
 
     <TextView
         android:id="@+id/cordsLabel"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/label_margin"
         app:layout_constraintBottom_toBottomOf="@id/cordsSwitch"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/cordsSwitch"
         app:layout_constraintTop_toTopOf="@id/cordsSwitch"
         tools:text="@string/coordination_direction_on" />
@@ -95,7 +96,7 @@
         android:buttonTint="@color/coordinates_switch_button_tint"
         android:elevation="@dimen/switch_elevation"
         app:layout_constraintBottom_toTopOf="@id/longitudeLabel"
-        app:layout_constraintStart_toStartOf="@id/longitudeEditText" />
+        app:layout_constraintStart_toStartOf="@id/latitudeEditText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
