@@ -26,7 +26,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 class MainActivity : BaseActivity<MainViewModel, MainState>() {
 
     companion object {
-        private const val NEEDED_PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION
+        private const val NEEDED_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION
     }
 
     override val viewModel: MainViewModel by viewModel()
