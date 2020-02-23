@@ -8,10 +8,6 @@ import android.hardware.SensorManager
 import io.reactivex.rxjava3.core.Observable
 
 class SensorNorthDirectionService(context: Context) : NorthDirectionService {
-    companion object {
-        private const val UPDATE_INTERVAL_MILLIS = 250L
-    }
-
     private val _sensorManager: SensorManager by lazy {
         context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
@@ -20,42 +16,10 @@ class SensorNorthDirectionService(context: Context) : NorthDirectionService {
 
     override fun listenNorthDirection(): Observable<Float> {
         var listener: SensorEventListener? = null
-        var isAccelerometerSet = false
-        var isMagnetometerSet = false
-        val accelerometerValues = FloatArray(3)
-        val magnetometerValues = FloatArray(3)
-        val rotation = FloatArray(9)
-        val orientation = FloatArray(3)
         val observable = Observable.create<Float> { emitter ->
-            listener = object : SensorEventListener {
-                override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 
-                override fun onSensorChanged(event: SensorEvent?) {
-                    event?.let {
-                        when (it.sensor) {
-                            _accelerometer -> {
-                                it.values.copyInto(accelerometerValues, 0, 0, 3)
-                                isAccelerometerSet = true
-                            }
-                            _magnetometer -> {
-                                it.values.copyInto(magnetometerValues, 0, 0, 3)
-                                isMagnetometerSet = true
-                            }
-                        }
-                        if (isAccelerometerSet && isMagnetometerSet) {
-                            SensorManager.getRotationMatrix(
-                                rotation,
-                                null,
-                                accelerometerValues,
-                                magnetometerValues
-                            )
-                            SensorManager.getOrientation(rotation, orientation)
+            listener = CompassEventListener(emitter::onNext)
 
-                            emitter.onNext(-Math.toDegrees(orientation[0].toDouble()).toFloat())
-                        }
-                    }
-                }
-            }
             _sensorManager.registerListener(
                 listener,
                 _accelerometer,
@@ -70,6 +34,44 @@ class SensorNorthDirectionService(context: Context) : NorthDirectionService {
         return observable.doOnDispose {
             _sensorManager.unregisterListener(listener, _accelerometer)
             _sensorManager.unregisterListener(listener, _magnetometer)
+        }
+    }
+
+    private inner class CompassEventListener(
+        private val onDegreesChanged: (degrees: Float) -> Unit
+    ) : SensorEventListener {
+        private var _isAccelerometerSet = false
+        private var _isMagnetometerSet = false
+        private val _accelerometerValues = FloatArray(3)
+        private val _magnetometerValues = FloatArray(3)
+        private val _rotation = FloatArray(9)
+        private val _orientation = FloatArray(3)
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+
+        override fun onSensorChanged(event: SensorEvent?) {
+            event?.let {
+                when (it.sensor) {
+                    _accelerometer -> {
+                        it.values.copyInto(_accelerometerValues, 0, 0, 3)
+                        _isAccelerometerSet = true
+                    }
+                    _magnetometer -> {
+                        it.values.copyInto(_magnetometerValues, 0, 0, 3)
+                        _isMagnetometerSet = true
+                    }
+                }
+                if (_isAccelerometerSet && _isMagnetometerSet) {
+                    SensorManager.getRotationMatrix(
+                        _rotation,
+                        null,
+                        _accelerometerValues,
+                        _magnetometerValues
+                    )
+                    SensorManager.getOrientation(_rotation, _orientation)
+
+                    onDegreesChanged(-Math.toDegrees(_orientation[0].toDouble()).toFloat())
+                }
+            }
         }
     }
 }
