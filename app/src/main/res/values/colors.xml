@@ -5,6 +5,7 @@
     <color name="colorAccent">@color/white</color>
     <color name="darkBackground">#0B012B</color>
     <color name="textColor">@color/white</color>
+    <color name="darkTextColor">#000</color>
     <color name="hintTextColor">#888</color>
     <color name="compassBackground">@color/white</color>
     <color name="editTextStroke">@color/white</color>
