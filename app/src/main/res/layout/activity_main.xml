@@ -69,12 +69,16 @@
         app:layout_constraintEnd_toStartOf="@id/cordsSwitch"
         app:layout_constraintStart_toEndOf="@id/longitudeEditText" />
 
-    <Switch
+    <CheckBox
         android:id="@+id/cordsSwitch"
+        android:background="@drawable/coordinates_switch_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
+        android:button="@drawable/place"
         android:layout_margin="@dimen/cords_input_margin"
+        android:buttonTint="@color/coordinates_switch_button_tint"
+        android:elevation="@dimen/switch_elevation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/latitudeEditText" />

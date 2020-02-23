@@ -4,4 +4,6 @@
     <dimen name="compass_arrow_margin">32dp</dimen>
     <dimen name="cords_input_margin">16dp</dimen>
     <dimen name="label_margin">4dp</dimen>
+    <dimen name="switch_stroke_width">1dp</dimen>
+    <dimen name="switch_elevation">4dp</dimen>
 </resources>
