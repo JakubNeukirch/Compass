@@ -32,7 +32,11 @@ class AndroidLocationService(private val context: Context) : LocationService {
                 listener = createLocationListener {
                     emitter.onNext(Coordinates(it.latitude, it.longitude))
                 }
-                val provider = _locationManager.getBestProvider(Criteria(), true)
+                val criteria = Criteria().apply {
+                    this.accuracy = Criteria.ACCURACY_COARSE
+                    this.isSpeedRequired = true
+                }
+                val provider = _locationManager.getBestProvider(criteria, true)
                     ?: throw ProvidersUnavailableException()
                 _locationManager.getLastKnownLocation(provider)?.let { location ->
                     emitter.onNext(Coordinates(location.latitude, location.longitude))
