@@ -36,12 +36,12 @@ class MainViewModel(
     fun listenNorthDirectionChanges() {
         _northDirectionUpdatesDisposable.set(
             _getNorthDirectionUpdates(Unit)
+                .sample(VALUE_REFRESH_TIME_MILLIS, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .sample(VALUE_REFRESH_TIME_MILLIS, TimeUnit.MILLISECONDS)
                 .subscribeBy(
                     onNext = { degrees ->
-                        mutableState.postValue(MainState.NorthDirectionState(degrees))
+                        mutableState.value = MainState.NorthDirectionState(degrees)
                     },
                     onError = Timber::e
                 )
@@ -65,9 +65,9 @@ class MainViewModel(
             _getCoordinatesDirectionUpdates(
                 IGetCoordinatesDirectionUpdates.Params(longitude, latitude)
             )
+                .sample(VALUE_REFRESH_TIME_MILLIS, TimeUnit.MILLISECONDS)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .sample(VALUE_REFRESH_TIME_MILLIS, TimeUnit.MILLISECONDS)
                 .subscribeBy(
                     onNext = { degrees ->
                         stopListeningNorthDirectionChanges()
