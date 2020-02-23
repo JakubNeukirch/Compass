@@ -8,6 +8,9 @@
     <string name="unknown_error">Oops! Something wrong happened</string>
     <string name="open">Open</string>
     <string name="cancel">Cancel</string>
+    <string name="coordinates_edit_text_help">0.0</string>
+    <string name="coordination_direction_on">Arrow is pointing coordinates</string>
+    <string name="coordination_direction_off">No coordinates, pointing North</string>
     <string name="permission_explanation_title">Location permission needed</string>
     <string name="permission_explanation_description">To provide you with all the features of the app it is needed to have location permission granted. To do that You can open app Settings and accept Location permission</string>
     <string name="location_explanation_title">Location needed</string>

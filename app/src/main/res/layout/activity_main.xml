@@ -8,16 +8,17 @@
 
     <ImageView
         android:id="@+id/compassBackground"
-        android:src="@drawable/compass"
+        android:src="@drawable/compass_background"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/latitudeEditText"
+        app:layout_constraintBottom_toTopOf="@id/cordsSwitch"
         app:layout_constraintDimensionRatio="1"
         android:layout_margin="@dimen/compass_margin"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/compass_background_description" />
+
     <ImageView
         android:id="@+id/compassArrow"
         android:src="@drawable/arrow"
@@ -32,6 +33,7 @@
         android:layout_height="0dp"/>
 
     <TextView
+        android:id="@+id/longitudeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/label_margin"
@@ -46,11 +48,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/cords_input_margin"
+        style="@style/AppTheme.EditTextCoordinate"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/latitudeEditText"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
+        android:id="@+id/latitudeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/label_margin"
@@ -66,8 +70,19 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/cords_input_margin"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cordsSwitch"
+        style="@style/AppTheme.EditTextCoordinate"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/longitudeEditText" />
+
+    <TextView
+        android:id="@+id/cordsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/label_margin"
+        app:layout_constraintBottom_toBottomOf="@id/cordsSwitch"
+        app:layout_constraintStart_toEndOf="@id/cordsSwitch"
+        app:layout_constraintTop_toTopOf="@id/cordsSwitch"
+        tools:text="@string/coordination_direction_on" />
 
     <CheckBox
         android:id="@+id/cordsSwitch"
@@ -76,12 +91,11 @@
         android:layout_height="wrap_content"
         android:enabled="false"
         android:button="@drawable/place"
-        android:layout_margin="@dimen/cords_input_margin"
+        android:layout_marginBottom="@dimen/cords_input_margin"
         android:buttonTint="@color/coordinates_switch_button_tint"
         android:elevation="@dimen/switch_elevation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/latitudeEditText" />
+        app:layout_constraintBottom_toTopOf="@id/longitudeLabel"
+        app:layout_constraintStart_toStartOf="@id/longitudeEditText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

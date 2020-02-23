@@ -12,7 +12,7 @@
         android:layout_height="0dp"
         android:layout_margin="@dimen/compass_margin"
         android:contentDescription="@string/compass_background_description"
-        android:src="@drawable/compass"
+        android:src="@drawable/compass_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,6 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/cords_input_margin"
         android:enabled="false"
+        style="@style/AppTheme.EditTextCoordinate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/compassBackground"
         app:layout_constraintTop_toBottomOf="@id/longitudeLabel" />
@@ -69,21 +70,36 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/cords_input_margin"
         android:enabled="false"
+        style="@style/AppTheme.EditTextCoordinate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/compassBackground"
         app:layout_constraintTop_toBottomOf="@id/latitudeLabel" />
+
+
+    <TextView
+        android:id="@+id/cordsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/label_margin"
+        app:layout_constraintBottom_toBottomOf="@id/cordsSwitch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/cordsSwitch"
+        app:layout_constraintTop_toTopOf="@id/cordsSwitch"
+        tools:text="@string/coordination_direction_on" />
 
     <CheckBox
         android:id="@+id/cordsSwitch"
         android:background="@drawable/coordinates_switch_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/cords_input_margin"
+        android:layout_marginTop="@dimen/cords_input_margin"
         android:enabled="false"
         android:button="@drawable/place"
         android:buttonTint="@color/coordinates_switch_button_tint"
         android:elevation="@dimen/switch_elevation"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cordsLabel"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/compassBackground"
         app:layout_constraintTop_toBottomOf="@id/latitudeEditText" />
 

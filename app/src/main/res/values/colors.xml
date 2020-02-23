@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="switchIconOn">#fff</color>
+    <color name="colorPrimary">#0B012B</color>
+    <color name="colorPrimaryDark">#0B0120</color>
+    <color name="colorAccent">@color/white</color>
+    <color name="darkBackground">#0B012B</color>
+    <color name="textColor">@color/white</color>
+    <color name="hintTextColor">#888</color>
+    <color name="compassBackground">@color/white</color>
+    <color name="editTextStroke">@color/white</color>
+    <color name="switchIconOn">@color/white</color>
     <color name="switchIconOff">#ddd</color>
     <color name="switchBackgroundStrokeOn">#2ECF0A</color>
     <color name="switchBackgroundOn">#772ECF0A</color>
     <color name="switchBackgroundStrokeOff">#444</color>
     <color name="switchBackgroundOff">#7444</color>
+    <color name="white">#fff</color>
 </resources>

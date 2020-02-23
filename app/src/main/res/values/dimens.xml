@@ -6,4 +6,8 @@
     <dimen name="label_margin">4dp</dimen>
     <dimen name="switch_stroke_width">1dp</dimen>
     <dimen name="switch_elevation">4dp</dimen>
+    <dimen name="compass_background_stroke_width">2dp</dimen>
+    <dimen name="edit_text_background_radius">4dp</dimen>
+    <dimen name="edit_text_background_stroke_width">1dp</dimen>
+    <dimen name="edit_text_padding">4dp</dimen>
 </resources>
