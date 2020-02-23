@@ -6,18 +6,18 @@ import eu.jakubneukirch.compass.service.LocationService
 import io.reactivex.rxjava3.core.Observable
 import kotlin.math.atan2
 
-interface ICoordinatesDirectionUpdates :
-    UseCase<ICoordinatesDirectionUpdates.Params, Observable<Float>> {
+interface IGetCoordinatesDirectionUpdates :
+    UseCase<IGetCoordinatesDirectionUpdates.Params, Observable<Float>> {
     data class Params(
         val longitude: Double?,
         val latitude: Double?
     )
 }
 
-class CoordinatesDirectionUpdates(
+class GetCoordinatesDirectionUpdates(
     private val _locationService: LocationService
-) : ICoordinatesDirectionUpdates {
-    override fun run(param: ICoordinatesDirectionUpdates.Params): Observable<Float> {
+) : IGetCoordinatesDirectionUpdates {
+    override fun run(param: IGetCoordinatesDirectionUpdates.Params): Observable<Float> {
         return if (param.latitude != null && param.longitude != null) {
             _locationService.listenToLocation()
                 .map {

@@ -28,7 +28,7 @@ class DirectionService(context: Context) {
             }
             _sensorManager.registerListener(
                 listener,
-                _sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                _sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_UI
             )
         }
