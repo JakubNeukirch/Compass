@@ -5,7 +5,6 @@ import eu.jakubneukirch.compass.data.model.Coordinates
 import eu.jakubneukirch.compass.service.LocationService
 import eu.jakubneukirch.compass.service.NorthDirectionService
 import io.reactivex.rxjava3.core.Observable
-import timber.log.Timber
 import kotlin.math.atan2
 
 interface IGetCoordinatesDirectionUpdates :
@@ -32,7 +31,7 @@ class GetCoordinatesDirectionUpdates(
     private fun getCompassAngle(latitude: Double, longitude: Double): Observable<Float> {
         return Observable.combineLatest(
             listOf(
-                _locationService.listenToLocation().doOnNext { Timber.i("Location: $it") },
+                _locationService.listenToLocation(),
                 _directionService.listenNorthDirection()
             )
         ) {
