@@ -11,7 +11,6 @@ import eu.jakubneukirch.compass.utils.subscribeBy
 import eu.jakubneukirch.compass.utils.toEvent
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.disposables.SerialDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
@@ -29,21 +28,22 @@ class MainViewModel(
     private val _error = MutableLiveData<Event<MainError>>()
     val error: LiveData<Event<MainError>> get() = _error
 
-    private var _northDirectionUpdatesDisposable: Disposable? = null
+    private var _northDirectionUpdatesDisposable = SerialDisposable()
     private val _coordinatesDirectionUpdatesDisposable = SerialDisposable()
     private val _inputDisposable = SerialDisposable()
 
     fun listenNorthDirectionChanges() {
-        /*_northDirectionUpdatesDisposable = _getNorthDirectionUpdates(Unit)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onNext = { degrees ->
-                    mutableState.value = MainState.NorthDirectionState(degrees)
-                },
-                onError = Timber::e
-            )*/
-
+        _northDirectionUpdatesDisposable.set(
+            _getNorthDirectionUpdates(Unit)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onNext = { degrees ->
+                        mutableState.value = MainState.NorthDirectionState(degrees)
+                    },
+                    onError = Timber::e
+                )
+        )
     }
 
     fun setCoordinates(longitude: Double?, latitude: Double?) {
@@ -82,12 +82,12 @@ class MainViewModel(
     }
 
     private fun stopListeningNorthDirectionChanges() {
-        _northDirectionUpdatesDisposable?.dispose()
-        _northDirectionUpdatesDisposable = null
+        _northDirectionUpdatesDisposable.dispose()
+        _northDirectionUpdatesDisposable = SerialDisposable()
     }
 
     override fun onCleared() {
-        _northDirectionUpdatesDisposable?.dispose()
+        _northDirectionUpdatesDisposable.dispose()
         _coordinatesDirectionUpdatesDisposable.dispose()
         _inputDisposable.dispose()
         super.onCleared()
