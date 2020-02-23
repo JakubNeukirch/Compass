@@ -41,7 +41,6 @@ class MainViewModel(
                 .sample(VALUE_REFRESH_TIME_MILLIS, TimeUnit.MILLISECONDS)
                 .subscribeBy(
                     onNext = { degrees ->
-                        Timber.i("Degrees")
                         mutableState.postValue(MainState.NorthDirectionState(degrees))
                     },
                     onError = Timber::e
