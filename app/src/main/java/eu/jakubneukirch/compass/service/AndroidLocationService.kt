@@ -32,9 +32,13 @@ class AndroidLocationService(private val context: Context) : LocationService {
                 listener = createLocationListener {
                     emitter.onNext(Coordinates(it.latitude, it.longitude))
                 }
+                val provider = _locationManager.getBestProvider(Criteria(), true)
+                    ?: throw ProvidersUnavailableException()
+                _locationManager.getLastKnownLocation(provider)?.let { location ->
+                    emitter.onNext(Coordinates(location.latitude, location.longitude))
+                }
                 _locationManager.requestLocationUpdates(
-                    _locationManager.getBestProvider(Criteria(), true)
-                        ?: throw ProvidersUnavailableException(),
+                    provider,
                     MIN_UPDATE_TIME_MILLIS,
                     MIN_UPDATE_DISTANCE_METERS,
                     listener!!

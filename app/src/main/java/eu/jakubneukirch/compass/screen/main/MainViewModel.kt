@@ -34,7 +34,7 @@ class MainViewModel(
     private val _inputDisposable = SerialDisposable()
 
     fun listenNorthDirectionChanges() {
-        _northDirectionUpdatesDisposable = _getNorthDirectionUpdates(Unit)
+        /*_northDirectionUpdatesDisposable = _getNorthDirectionUpdates(Unit)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -42,7 +42,7 @@ class MainViewModel(
                     mutableState.value = MainState.NorthDirectionState(degrees)
                 },
                 onError = Timber::e
-            )
+            )*/
 
     }
 
@@ -63,11 +63,11 @@ class MainViewModel(
             _getCoordinatesDirectionUpdates(
                 IGetCoordinatesDirectionUpdates.Params(longitude, latitude)
             )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onNext = { degrees ->
                         stopListeningNorthDirectionChanges()
+                        Timber.i("direction degrees $degrees")
                         mutableState.value = MainState.CordsDirectionState(degrees)
                     },
                     onError = {
