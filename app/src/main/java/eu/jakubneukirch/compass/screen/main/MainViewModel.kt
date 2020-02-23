@@ -93,6 +93,7 @@ class MainViewModel(
 
     enum class MainError {
         PROVIDERS_UNAVAILABLE,
+        LOCATION_PERMISSION_NOT_GRANTED,
         UNKNOWN
     }
 }

@@ -1,7 +1,13 @@
 package eu.jakubneukirch.compass.screen.main
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.lifecycle.Observer
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -15,9 +21,16 @@ import eu.jakubneukirch.compass.utils.OnTextChangedListener
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
+
 class MainActivity : BaseActivity<MainViewModel, MainState>() {
 
     override val viewModel: MainViewModel by viewModel()
+    private val _explanationDialog: AlertDialog by lazy {
+        createExplanationDialog()
+    }
+    private val _onCoordinationTextChangedListener = OnTextChangedListener {
+        updateCoordinatesData()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,14 +40,23 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
         requestLocationPermission()
     }
 
+    override fun onResume() {
+        super.onResume()
+        enableLocationFeatures(
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+                    || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        )
+
+    }
+
     private fun observeErrors() {
         viewModel.error.observe(this, Observer { event ->
             event?.pendingContent?.let { error ->
-                val errorMessageId = when (error) {
-                    MainViewModel.MainError.PROVIDERS_UNAVAILABLE -> R.string.providers_error
-                    MainViewModel.MainError.UNKNOWN -> R.string.unknown_error
+                when (error) {
+                    MainViewModel.MainError.PROVIDERS_UNAVAILABLE -> showMessage(getString(R.string.providers_error))
+                    MainViewModel.MainError.LOCATION_PERMISSION_NOT_GRANTED -> requestLocationPermission()
+                    MainViewModel.MainError.UNKNOWN -> showMessage(getString(R.string.unknown_error))
                 }
-                showMessage(getString(errorMessageId))
             }
         })
     }
@@ -44,7 +66,7 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
             .withPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
             .withListener(object : PermissionListener {
                 override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-                    enableLocationFeatures()
+                    enableLocationFeatures(true)
                 }
 
                 override fun onPermissionRationaleShouldBeShown(
@@ -55,19 +77,54 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
                 }
 
                 override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+                    if (response?.isPermanentlyDenied == true) {
+                        showExplanationDialog()
+                    } else {
+                        requestLocationPermission()
+                    }
                 }
             })
             .check()
     }
 
-    private fun enableLocationFeatures() {
-        latitudeEditText.isEnabled = true
-        longitudeEditText.isEnabled = true
-        val onTextChangedListener = OnTextChangedListener {
-            updateCoordinatesData()
+    private fun showExplanationDialog() {
+        if (!_explanationDialog.isShowing) {
+            _explanationDialog.show()
         }
-        latitudeEditText.addTextChangedListener(onTextChangedListener)
-        longitudeEditText.addTextChangedListener(onTextChangedListener)
+    }
+
+    private fun createExplanationDialog(): AlertDialog {
+        return AlertDialog.Builder(this)
+            .setTitle(R.string.permission_explanation_title)
+            .setMessage(R.string.permission_explanation_description)
+            .setPositiveButton(R.string.permission_explanation_open) { dialog, _ ->
+                dialog?.dismiss()
+                openAppSettings()
+            }
+            .setNegativeButton(R.string.permission_explanation_cancel) { dialog, _ ->
+                dialog?.dismiss()
+            }
+            .create()
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri: Uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    private fun enableLocationFeatures(isEnabled: Boolean) {
+        latitudeEditText.isEnabled = isEnabled
+        longitudeEditText.isEnabled = isEnabled
+        if (isEnabled) {
+            latitudeEditText.addTextChangedListener(_onCoordinationTextChangedListener)
+            longitudeEditText.addTextChangedListener(_onCoordinationTextChangedListener)
+        } else {
+            latitudeEditText.removeTextChangedListener(_onCoordinationTextChangedListener)
+            longitudeEditText.removeTextChangedListener(_onCoordinationTextChangedListener)
+            requestLocationPermission()
+        }
     }
 
     private fun updateCoordinatesData() {
