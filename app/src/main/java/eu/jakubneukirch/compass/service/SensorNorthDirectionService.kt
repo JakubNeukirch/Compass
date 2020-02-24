@@ -35,6 +35,13 @@ class SensorNorthDirectionService(context: Context) : NorthDirectionService {
             _sensorManager.unregisterListener(listener, _accelerometer)
             _sensorManager.unregisterListener(listener, _magnetometer)
         }
+            .map {
+                if (it < 0) {
+                    360 + it
+                } else {
+                    it
+                }
+            }
     }
 
     private inner class CompassEventListener(

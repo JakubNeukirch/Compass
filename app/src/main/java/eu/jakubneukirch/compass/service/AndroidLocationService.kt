@@ -4,19 +4,20 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import eu.jakubneukirch.compass.data.model.Coordinates
 import io.reactivex.rxjava3.core.Observable
+import timber.log.Timber
 
 class AndroidLocationService(private val context: Context) : LocationService {
     companion object {
         private const val MIN_UPDATE_DISTANCE_METERS = 1f
-        private const val MIN_UPDATE_TIME_MILLIS = 100L
+        private const val MIN_UPDATE_TIME_MILLIS = 500L
     }
 
     private val _locationManager: LocationManager by lazy {
@@ -32,8 +33,9 @@ class AndroidLocationService(private val context: Context) : LocationService {
                 listener = createLocationListener {
                     emitter.onNext(Coordinates(it.latitude, it.longitude))
                 }
-                val provider = _locationManager.getBestProvider(Criteria(), true)
+                val provider = getBestPossibleProvider()
                     ?: throw ProvidersUnavailableException()
+                Timber.i("Provider $provider")
                 _locationManager.getLastKnownLocation(provider)?.let { location ->
                     emitter.onNext(Coordinates(location.latitude, location.longitude))
                 }
@@ -41,7 +43,8 @@ class AndroidLocationService(private val context: Context) : LocationService {
                     provider,
                     MIN_UPDATE_TIME_MILLIS,
                     MIN_UPDATE_DISTANCE_METERS,
-                    listener!!
+                    listener!!,
+                    Looper.getMainLooper()
                 )
             } else {
                 throw LocationPermissionNotGrantedException()
@@ -53,6 +56,16 @@ class AndroidLocationService(private val context: Context) : LocationService {
             }
         }
         return observable
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getBestPossibleProvider(): String? {
+        val providers = linkedSetOf(
+            LocationManager.GPS_PROVIDER,
+            LocationManager.NETWORK_PROVIDER,
+            LocationManager.PASSIVE_PROVIDER
+        )
+        return providers.find { _locationManager.getLastKnownLocation(it) != null }
     }
 
     private fun createLocationListener(onLocation: (location: Location) -> Unit): LocationListener {
@@ -72,7 +85,7 @@ class AndroidLocationService(private val context: Context) : LocationService {
 
     private fun isPermissionGranted(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         } else {
             true
         }

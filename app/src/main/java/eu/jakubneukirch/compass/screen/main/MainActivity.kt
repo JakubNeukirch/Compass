@@ -8,6 +8,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.Surface
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
 import androidx.lifecycle.Observer
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -20,12 +23,13 @@ import eu.jakubneukirch.compass.base.BaseActivity
 import eu.jakubneukirch.compass.utils.OnTextChangedListener
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
+import kotlin.math.roundToInt
 
 
 class MainActivity : BaseActivity<MainViewModel, MainState>() {
 
     companion object {
-        private const val NEEDED_PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION
+        private const val NEEDED_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION
     }
 
     override val viewModel: MainViewModel by viewModel()
@@ -36,6 +40,9 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
         createLocationExplanationDialog()
     }
     private var _isLocationExplanationCanceled: Boolean = false
+
+    private var _arrowAnimation: Animation? = null
+    private var _lastAngle: Float = 0f
 
     private val _onCoordinationTextChangedListener = OnTextChangedListener {
         updateCoordinatesData()
@@ -95,6 +102,69 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
             .check()
     }
 
+    private fun enableLocationFeatures(isEnabled: Boolean) {
+        latitudeEditText.isEnabled = isEnabled
+        longitudeEditText.isEnabled = isEnabled
+        if (isEnabled) {
+            latitudeEditText.addTextChangedListener(_onCoordinationTextChangedListener)
+            longitudeEditText.addTextChangedListener(_onCoordinationTextChangedListener)
+            updateCoordinatesData()
+        } else {
+            latitudeEditText.removeTextChangedListener(_onCoordinationTextChangedListener)
+            longitudeEditText.removeTextChangedListener(_onCoordinationTextChangedListener)
+            requestLocationPermission()
+        }
+    }
+
+    private fun updateCoordinatesData() {
+        viewModel.setCoordinates(
+            longitudeEditText.text.toString().toDoubleOrNull(),
+            latitudeEditText.text.toString().toDoubleOrNull()
+        )
+    }
+
+    override fun onStateChanged(state: MainState) {
+        setRotation(state.degrees)
+        setPointingState(state is MainState.CordsDirectionState)
+    }
+
+    private fun setPointingState(isCordsState: Boolean) {
+        cordsSwitch.isChecked = isCordsState
+        cordsLabel.text = getString(
+            if (isCordsState)
+                R.string.coordination_direction_on
+            else
+                R.string.coordination_direction_off
+        )
+    }
+
+    private fun setRotation(rotation: Float) {
+        val angle = (rotation - getOrientationAngle()).roundToInt()
+        _arrowAnimation?.cancel()
+        _arrowAnimation = RotateAnimation(
+            _lastAngle,
+            angle.toFloat(),
+            Animation.RELATIVE_TO_SELF,
+            0.5f,
+            Animation.RELATIVE_TO_SELF,
+            0.5f
+        ).apply {
+            duration = MainViewModel.VALUE_REFRESH_TIME_MILLIS
+            this.fillAfter = true
+        }
+        compassArrow.startAnimation(_arrowAnimation)
+        _lastAngle = angle.toFloat()
+    }
+
+    private fun getOrientationAngle(): Int {
+        return when (windowManager.defaultDisplay.rotation) {
+            Surface.ROTATION_90 -> 90
+            Surface.ROTATION_180 -> 180
+            Surface.ROTATION_270 -> 270
+            else -> 0
+        }
+    }
+
     private fun showPermissionExplanationDialog() {
         if (!_permissionExplanationDialog.isShowing) {
             _permissionExplanationDialog.show()
@@ -145,39 +215,5 @@ class MainActivity : BaseActivity<MainViewModel, MainState>() {
 
     private fun openLocationSettings() {
         startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-    }
-
-    private fun enableLocationFeatures(isEnabled: Boolean) {
-        latitudeEditText.isEnabled = isEnabled
-        longitudeEditText.isEnabled = isEnabled
-        if (isEnabled) {
-            latitudeEditText.addTextChangedListener(_onCoordinationTextChangedListener)
-            longitudeEditText.addTextChangedListener(_onCoordinationTextChangedListener)
-            updateCoordinatesData()
-        } else {
-            latitudeEditText.removeTextChangedListener(_onCoordinationTextChangedListener)
-            longitudeEditText.removeTextChangedListener(_onCoordinationTextChangedListener)
-            requestLocationPermission()
-        }
-    }
-
-    private fun updateCoordinatesData() {
-        viewModel.setCoordinates(
-            longitudeEditText.text.toString().toDoubleOrNull(),
-            latitudeEditText.text.toString().toDoubleOrNull()
-        )
-    }
-
-    override fun onStateChanged(state: MainState) {
-        setRotation(state.degrees)
-        setCordsSwitchState(state is MainState.CordsDirectionState)
-    }
-
-    private fun setCordsSwitchState(isCordsState: Boolean) {
-        cordsSwitch.isChecked = isCordsState
-    }
-
-    private fun setRotation(rotation: Float) {
-        compassArrow.rotation = rotation
     }
 }

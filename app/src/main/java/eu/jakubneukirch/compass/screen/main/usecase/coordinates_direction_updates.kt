@@ -48,9 +48,11 @@ class GetCoordinatesDirectionUpdates(
     }
 
     private fun calculateAngle(currentLocation: Coordinates, destination: Coordinates): Float {
+        val x = destination.latitude - currentLocation.latitude
+        val y = destination.longitude - currentLocation.longitude
         val radians = atan2(
-            destination.latitude - currentLocation.latitude,
-            destination.longitude - currentLocation.longitude
+            y,
+            x
         )
         return Math.toDegrees(radians).toFloat()
     }

@@ -23,6 +23,7 @@ class MainViewModel(
 
     companion object {
         private const val INPUT_DEBOUNCE_DELAY_MILLIS = 150L
+        const val VALUE_REFRESH_TIME_MILLIS = 100L
     }
 
     private val _error = MutableLiveData<Event<MainError>>()
@@ -35,6 +36,7 @@ class MainViewModel(
     fun listenNorthDirectionChanges() {
         _northDirectionUpdatesDisposable.set(
             _getNorthDirectionUpdates(Unit)
+                .sample(VALUE_REFRESH_TIME_MILLIS, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -63,13 +65,16 @@ class MainViewModel(
             _getCoordinatesDirectionUpdates(
                 IGetCoordinatesDirectionUpdates.Params(longitude, latitude)
             )
+                .sample(VALUE_REFRESH_TIME_MILLIS, TimeUnit.MILLISECONDS)
                 .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onNext = { degrees ->
                         stopListeningNorthDirectionChanges()
                         mutableState.value = MainState.CordsDirectionState(degrees)
                     },
                     onError = {
+                        Timber.e("$it")
                         listenNorthDirectionChanges()
                         if (it is ProvidersUnavailableException) {
                             _error.value = MainError.PROVIDERS_UNAVAILABLE.toEvent()
